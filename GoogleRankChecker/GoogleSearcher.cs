@@ -16,7 +16,8 @@ namespace GoogleRankChecker
 
         public async Task<string> Search(string searchTerm)
         {
-            var response = await httpClient.GetAsync($"https://www.google.com.au/search?num=100&q=");
+            var url = $"https://www.google.com.au/search?num=100&q={System.Web.HttpUtility.UrlEncode(searchTerm)}";
+            var response = await httpClient.GetAsync(url);
             return await response.Content.ReadAsStringAsync();
         }
     }

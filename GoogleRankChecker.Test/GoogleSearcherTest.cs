@@ -10,15 +10,15 @@ namespace GoogleRankChecker.Test
     public class GoogleSearcherTest
     {
         [Fact]
-        public async void should_not_return_any_matches_for_unkown_domain()
+        public async void should_query_correct_google_url()
         {
             var mockHttp = new MockHttpMessageHandler();
             var expectedHtml = "Google says hello";
-            mockHttp.Expect("https://www.google.com.au/*")
-                    .Respond("text/html", expectedHtml);
+            mockHttp.Expect("https://www.google.com.au/search?num=100&q=conveyancing+software")
+                .Respond("text/html", expectedHtml);
             var target = new GoogleSearcher(mockHttp.ToHttpClient());
 
-            var result = await target.Search("flying fish");
+            var result = await target.Search("conveyancing software");
 
             mockHttp.VerifyNoOutstandingExpectation();
             Assert.Equal(expectedHtml, result);
