@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using static System.String;
 
 namespace GoogleRankChecker
@@ -11,16 +13,16 @@ namespace GoogleRankChecker
         private GoogleResultParser Parser { get; }
         private GoogleSearcher Searcher { get; }
 
-        public App()
+        public App(HttpClient client)
         {
             //no DI for now.
             this.Parser = new GoogleResultParser();
-            this.Searcher = new GoogleSearcher();
+            this.Searcher = new GoogleSearcher(client);
         }
 
-        public Result Check(Request request)
+        public async Task<Result> Check(Request request)
         {
-            var html = this.Searcher.Search(request.SearchTerm);
+            var html = await this.Searcher.Search(request.SearchTerm);
             return new Result(this.Parser.CountAdResults(html, request.Domain), this.Parser.CountOrganicResults(html, request.Domain));
         }
 
