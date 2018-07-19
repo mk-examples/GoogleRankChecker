@@ -8,9 +8,20 @@ namespace GoogleRankChecker
     /* Top level class for procesing the users request and return results */
     public class App
     {
+        private GoogleResultParser Parser { get; }
+        private GoogleSearcher Searcher { get; }
+
+        public App()
+        {
+            //no DI for now.
+            this.Parser = new GoogleResultParser();
+            this.Searcher = new GoogleSearcher();
+        }
+
         public Result Check(Request request)
         {
-            return new Result(Enumerable.Empty<int>(), Enumerable.Empty<int>());
+            var html = this.Searcher.Search(request.SearchTerm);
+            return new Result(this.Parser.CountAdResults(html, request.Domain), this.Parser.CountOrganicResults(html, request.Domain));
         }
 
         /*
