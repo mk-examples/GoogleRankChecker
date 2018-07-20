@@ -10,20 +10,21 @@ namespace GoogleRankChecker
     /* Top level class for procesing the users request and return results */
     public class App
     {
-        private GoogleResultParser Parser { get; }
-        private GoogleSearcher Searcher { get; }
+        private ResultParser Parser { get; }
+        private Downloader Downloader { get; }
 
         public App(HttpClient client)
         {
             //no DI for now.
-            this.Parser = new GoogleResultParser();
-            this.Searcher = new GoogleSearcher(client);
+            this.Parser = new ResultParser();
+            this.Downloader = new Downloader(client);
         }
 
         public async Task<Result> Check(Request request)
         {
-            var html = await this.Searcher.Search(request.SearchTerm);
-            return new Result(this.Parser.CountAdResults(html, request.Domain), this.Parser.CountOrganicResults(html, request.Domain));
+            var html = await this.Downloader.Search(request.SearchTerm);
+            var domains = this.Parser.GetLinkedDomains(html);
+            return new Result(new int[0]);
         }
 
         /*
@@ -46,15 +47,12 @@ namespace GoogleRankChecker
         /* Holds the result of the users request */
         public class Result
         {
-            public Result(IEnumerable<int> ads, IEnumerable<int> organic)
+            public Result(IEnumerable<int> organic)
             {
-                if (ads == null) throw new ArgumentNullException(nameof(ads));
                 if (organic == null) throw new ArgumentNullException(nameof(organic));
 
-                this.Ad = ads.ToArray();
                 this.Organic = organic.ToArray();
             }
-            public int[] Ad { get; }
             public int[] Organic { get; }
         }
     }
