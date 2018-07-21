@@ -1,2 +1,2 @@
 using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("GoogleRankChecker.Test")]
+[assembly : InternalsVisibleTo ("GoogleRankChecker.Test")]
