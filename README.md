@@ -26,7 +26,7 @@ Make sure you have dotnet core 2 installed and simply run
 
 ### Prerequisites
 
-You'll need the dotnet core 2.x runtime installed
+You'll need the dotnet core 2.1 runtime installed
 
 ## Running the tests
 
