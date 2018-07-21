@@ -10,17 +10,16 @@ namespace GoogleRankChecker
 
         static void Main(string[] args)
         {
-            var httpClientHandler = new HttpClientHandler
-            {
-                Proxy = new WebProxy("http://localhost:8888", false),
-                UseProxy = false
-            };
-
             //ONLY create one httpClient and reuse (for performance)
-            var httpClient = new HttpClient(httpClientHandler);
-
-            var result = new App(httpClient).Check(CliParsers.Parse(args)).Result;
-            Console.WriteLine(ResultToString.Present(result));
+            var httpClient = new HttpClient();
+            var parseResult = Cli.Parser.Parse(args);
+            if (!parseResult.IsValid)
+            {
+                Console.WriteLine(String.Join("\n", parseResult.Messages));
+                return;
+            }
+            var result = new App(httpClient).Check(parseResult.ToAppRequest()).Result;
+            Console.WriteLine(Cli.Presenter.Present(result));
         }
     }
 }

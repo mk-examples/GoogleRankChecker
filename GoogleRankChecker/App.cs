@@ -23,8 +23,24 @@ namespace GoogleRankChecker
         public async Task<Result> Check(Request request)
         {
             var html = await this.Downloader.Search(request.SearchTerm);
-            var domains = this.Parser.GetLinkedDomains(html);
-            return new Result(new int[0]);
+
+            /* 
+                writes the html into a file for debugging.
+                **
+                    Could be done all all requests and used as a cache
+                    And placed in a sensitble location 
+                    e.g. System.IO.Path.GetTempPath()
+                **
+            */
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.IO.File.WriteAllText("./html.html", html);
+
+            var domainResults = this.Parser.GetLinkedDomains(html)
+                //Filter only the domains we are interested it
+                .Where(x => String.Compare(x.Domain, request.Domain, true) == 0)
+                //return position only.
+                .Select(x => x.Position);
+            return new Result(domainResults);
         }
 
         /*
@@ -47,13 +63,13 @@ namespace GoogleRankChecker
         /* Holds the result of the users request */
         public class Result
         {
-            public Result(IEnumerable<int> organic)
+            public Result(IEnumerable<int> positions)
             {
-                if (organic == null) throw new ArgumentNullException(nameof(organic));
+                if (positions == null) throw new ArgumentNullException(nameof(positions));
 
-                this.Organic = organic.ToArray();
+                this.Positions = positions.ToArray();
             }
-            public int[] Organic { get; }
+            public int[] Positions { get; }
         }
     }
 }

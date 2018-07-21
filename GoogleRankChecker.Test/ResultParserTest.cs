@@ -16,7 +16,7 @@ namespace GoogleRankChecker.Test
             TraceOn.Ensure();
         }
         [Fact]
-        public void should_parse_google_ad_results()
+        public void should_parse_google_results()
         {
             var parser = new ResultParser();
             var results = parser.GetLinkedDomains(SampleHtml.Sample01);

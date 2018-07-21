@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Diagnostics.Trace;
 namespace GoogleRankChecker
@@ -21,17 +22,18 @@ namespace GoogleRankChecker
         public IEnumerable<Result> GetLinkedDomains(string html)
         {
             int position = 0;
+
             foreach (Match match in regex.Matches(html))
             {
                 position++;
                 var domain = match.Groups[2].Value;
                 var result = new Result(position, domain);
                 WriteLine($"{domain} found ({position})");
+
                 yield return new Result(position, domain);
             }
+
         }
-
-
     }
 
     public class Result
